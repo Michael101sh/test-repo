@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <label>CME Case Queue Data Retrieval</label>
+    <interviewLabel>CME Case Queue Data Retrieval</interviewLabel>
+    <description>Retrieves open cases for a specified user with calculated fields for the case management dashboard</description>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+
+    <!-- Input Variables -->
+    <variables>
+        <name>varUserId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <!-- Output Variables -->
+    <variables>
+        <name>varCaseList</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Case</objectType>
+    </variables>
+
+    <!-- Start Element -->
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_Open_Cases</targetReference>
+        </connector>
+    </start>
+
+    <!-- Get Records: Retrieve open cases for the user -->
+    <recordLookups>
+        <name>Get_Open_Cases</name>
+        <label>Get Open Cases</label>
+        <locationX>50</locationX>
+        <locationY>150</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Assign_Case_List</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OwnerId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varUserId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>IsClosed</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CaseNumber</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <queriedFields>Priority</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <queriedFields>IsEscalated</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <queriedFields>SlaStartDate</queriedFields>
+        <queriedFields>SlaExitDate</queriedFields>
+        <queriedFields>LastModifiedDate</queriedFields>
+        <queriedFields>LastModifiedById</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <sortField>Priority</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+
+    <!-- Assignment: Set output variable -->
+    <assignments>
+        <name>Assign_Case_List</name>
+        <label>Assign Case List</label>
+        <locationX>50</locationX>
+        <locationY>250</locationY>
+        <assignmentItems>
+            <assignToReference>varCaseList</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Open_Cases</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+</Flow>

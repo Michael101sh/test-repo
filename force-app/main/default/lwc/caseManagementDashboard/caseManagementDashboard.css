@@ -1,0 +1,69 @@
+/* Metric Values */
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Insight Cards */
+.insight-card {
+    padding: 1rem;
+    border-radius: 0.25rem;
+    border-left: 4px solid;
+    background-color: var(--lwc-colorBackground);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.insight-card.risk-card {
+    border-left-color: var(--lwc-colorBorderError);
+    background-color: rgba(234, 0, 30, 0.05);
+}
+
+.insight-card.stale-card {
+    border-left-color: var(--lwc-colorBorderWarning);
+    background-color: rgba(255, 183, 93, 0.05);
+}
+
+.insight-card.momentum-card {
+    border-left-color: var(--lwc-colorBorderSuccess);
+    background-color: rgba(46, 132, 74, 0.05);
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.insight-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .metric-value {
+        font-size: 1.5rem;
+    }
+
+    .insight-count {
+        font-size: 2rem;
+    }
+}
+
+/* Table customization */
+lightning-datatable {
+    --slds-c-datatable-cell-spacing-block-start: 0.5rem;
+    --slds-c-datatable-cell-spacing-block-end: 0.5rem;
+}
+
+/* Loading state */
+.slds-is-relative {
+    min-height: 200px;
+}

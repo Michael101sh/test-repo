@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+            <flexiPageRegions>
+                <itemInstances>
+                    <componentInstance>
+                        <identifier>caseManagementDashboard1</identifier>
+                        <componentName>caseManagementDashboard</componentName>
+                    </componentInstance>
+                </itemInstances>
+                <name>main</name>
+                <type>Region</type>
+            </flexiPageRegions>
+            <masterLabel>Case Management Dashboard</masterLabel>
+            <description>Lightning App Page hosting the Case Management Dashboard for support agents to view their open case queue with service health indicators and proactive insights</description>
+            <template>
+                <name>flexipage:defaultAppHomeTemplate</name>
+            </template>
+            <type>AppPage</type>
+        </FlexiPage>

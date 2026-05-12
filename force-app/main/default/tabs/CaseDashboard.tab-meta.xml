@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+            <label>Case Dashboard</label>
+            <description>Custom tab providing navigation to the Case Management Dashboard for support agents.</description>
+            
+            <flexiPage>Case_Management_Dashboard</flexiPage>
+            
+            <motif>Custom48: Trophy</motif>
+        </CustomTab>

@@ -1,0 +1,144 @@
+<template>
+    <lightning-card title="Case Management Dashboard" icon-name="standard:case">
+        <!-- Header with refresh button -->
+        <div slot="actions">
+            <lightning-button
+                label="Refresh"
+                icon-name="utility:refresh"
+                onclick={handleRefresh}
+                disabled={isLoading}
+            ></lightning-button>
+            <span class="slds-text-body_small slds-m-left_small">
+                {formattedLastRefresh}
+            </span>
+        </div>
+
+        <!-- Summary Metrics Panel -->
+        <div class="slds-p-around_medium">
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-card title="Total Open Cases">
+                        <div class="slds-align_absolute-center slds-p-vertical_medium">
+                            <span class="metric-value">{totalOpenCount}</span>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-card title="SLA Risk">
+                        <div class="slds-align_absolute-center slds-p-vertical_medium">
+                            <span class="metric-value slds-text-color_error">{slaRiskCount}</span>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-card title="Escalated Cases">
+                        <div class="slds-align_absolute-center slds-p-vertical_medium">
+                            <span class="metric-value slds-text-color_warning">{escalatedCount}</span>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-4">
+                    <lightning-card title="Needs Response">
+                        <div class="slds-align_absolute-center slds-p-vertical_medium">
+                            <span class="metric-value">{needsResponseCount}</span>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Section -->
+        <template if:true={hasInsights}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <lightning-card title="Case Insights">
+                    <div class="slds-p-around_medium">
+                        <div class="slds-grid slds-wrap slds-gutters">
+                            <template if:true={casesAtRiskCount}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <div class="insight-card risk-card">
+                                        <div class="insight-header">
+                                            <lightning-icon icon-name="utility:warning" size="small" variant="error"></lightning-icon>
+                                            <span class="slds-m-left_x-small">Cases at Risk</span>
+                                        </div>
+                                        <div class="insight-count">{casesAtRiskCount}</div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template if:true={staleCasesCount}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <div class="insight-card stale-card">
+                                        <div class="insight-header">
+                                            <lightning-icon icon-name="utility:clock" size="small" variant="warning"></lightning-icon>
+                                            <span class="slds-m-left_x-small">Stale Cases</span>
+                                        </div>
+                                        <div class="insight-count">{staleCasesCount}</div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <template if:true={trendingCasesCount}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                                    <div class="insight-card momentum-card">
+                                        <div class="insight-header">
+                                            <lightning-icon icon-name="utility:trending" size="small" variant="success"></lightning-icon>
+                                            <span class="slds-m-left_x-small">Resolution Momentum</span>
+                                        </div>
+                                        <div class="insight-count">{trendingCasesCount}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+
+        <!-- Loading Spinner -->
+        <template if:true={isLoading}>
+            <div class="slds-is-relative slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading cases..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error Message -->
+        <template if:true={hasError}>
+            <div class="slds-p-around_medium">
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">Error</span>
+                    <h2>{error}</h2>
+                </div>
+            </div>
+        </template>
+
+        <!-- Case Queue Table -->
+        <template if:true={hasCases}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <lightning-datatable
+                    key-field="caseId"
+                    data={cases}
+                    columns={columns}
+                    sorted-by={sortedBy}
+                    sorted-direction={sortedDirection}
+                    onsort={handleSort}
+                    hide-checkbox-column
+                    show-row-number-column
+                ></lightning-datatable>
+            </div>
+        </template>
+
+        <!-- No Cases Message -->
+        <template if:false={hasCases}>
+            <template if:false={isLoading}>
+                <template if:false={hasError}>
+                    <div class="slds-p-around_medium slds-align_absolute-center">
+                        <p class="slds-text-body_regular">No open cases found.</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+    </lightning-card>
+</template>

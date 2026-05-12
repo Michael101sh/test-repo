@@ -1,0 +1,95 @@
+sequenceDiagram
+    actor Agent as Support Agent
+    participant Dashboard as Case Management<br/>Dashboard (LWC)
+    participant Controller as CaseQueueController<br/>(Apex)
+    participant Database as Salesforce<br/>Database
+    participant Agentforce as Agentforce Agent
+    participant Actions as CaseInsightsActions<br/>(Apex/Flow)
+
+    Agent->>Dashboard: 1. Access Dashboard
+    activate Dashboard
+    
+    Dashboard->>Dashboard: 2. Initialize Component
+    Dashboard->>Controller: 3. getOpenCases()
+    activate Controller
+    
+    Controller->>Database: 4. Query Cases<br/>(OwnerId=User, IsClosed=false)
+    activate Database
+    Database-->>Controller: 5. Return Case Records
+    deactivate Database
+    
+    Controller->>Controller: 6. Calculate Metrics<br/>(Days Open, SLA Risk,<br/>Momentum, Needs Response)
+    Controller-->>Dashboard: 7. Return CaseWrapper List
+    deactivate Controller
+    
+    par Parallel Requests
+        Dashboard->>Controller: 8a. getQueueSummary()
+        activate Controller
+        Controller-->>Dashboard: 9a. Return Summary Metrics
+        deactivate Controller
+    and
+        Dashboard->>Controller: 8b. getCaseInsights()
+        activate Controller
+        Controller->>Database: Query for Insights
+        activate Database
+        Database-->>Controller: Return Cases
+        deactivate Database
+        Controller->>Controller: Analyze Patterns
+        Controller-->>Dashboard: 9b. Return Insights
+        deactivate Controller
+    end
+    
+    Dashboard->>Dashboard: 10. Render Data Table<br/>with Visual Indicators
+    Dashboard->>Dashboard: 11. Display Summary Metrics<br/>(Total, SLA Risk, Escalated,<br/>Needs Response)
+    Dashboard-->>Agent: 12. Dashboard Loaded
+    deactivate Dashboard
+    
+    Dashboard->>Agentforce: 13. Trigger Agent Insights
+    activate Agentforce
+    
+    Agentforce->>Actions: 14. Invoke Agent Actions
+    activate Actions
+    
+    par Agent Actions
+        Actions->>Database: 14a. getSLABreachRisks()
+        activate Database
+        Database-->>Actions: Cases within 24h of SLA
+        deactivate Database
+    and
+        Actions->>Database: 14b. getStaleCases()
+        activate Database
+        Database-->>Actions: Cases with no update 48+h
+        deactivate Database
+    and
+        Actions->>Database: 14c. getResolutionMomentum()
+        activate Database
+        Database-->>Actions: Cases progressed in 48h
+        deactivate Database
+    and
+        Actions->>Database: 14d. detectAnomalies()
+        activate Database
+        Database-->>Actions: Unusual patterns
+        deactivate Database
+    end
+    
+    Actions-->>Agentforce: 15. Return Insight Data
+    deactivate Actions
+    
+    Agentforce->>Agentforce: 16. Synthesize Insights<br/>(Immediate Attention vs<br/>Progressing)
+    Agentforce-->>Dashboard: 17. Display Agent Insights
+    deactivate Agentforce
+    
+    Dashboard->>Dashboard: 18. Start Auto-Refresh<br/>(Every 5 minutes)
+    
+    Agent->>Dashboard: 19. Manual Refresh (Optional)
+    activate Dashboard
+    Dashboard->>Controller: 20. Reload All Data
+    activate Controller
+    Controller->>Database: 21. Query Updated Cases
+    activate Database
+    Database-->>Controller: 22. Return Updated Records
+    deactivate Database
+    Controller-->>Dashboard: 23. Return Updated Data
+    deactivate Controller
+    Dashboard-->>Agent: 24. Display Updated Dashboard
+    deactivate Dashboard

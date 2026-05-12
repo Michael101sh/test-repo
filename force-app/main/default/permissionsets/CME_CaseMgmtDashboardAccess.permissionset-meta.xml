@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+            <fullName>CME_CaseMgmtDashboardAccess</fullName>
+            <label>Case Management Dashboard Access</label>
+            <description>Grants support agents access to the Case Management Dashboard, all related Apex classes, Flows, custom tab, and custom application.</description><!-- Tab Settings - Make custom tabs visible -->
+            
+            <tabSettings>
+                <tab>CaseDashboard</tab>
+                <visibility>Visible</visibility>
+            </tabSettings>
+            
+            
+            <!-- Application Visibility - Make custom applications available -->
+            
+            <applicationVisibilities>
+                <application>Support_Agent_Console</application>
+                <visible>true</visible>
+            </applicationVisibilities>
+            
+            
+            <!-- Apex Class Access - Grant access to Apex classes -->
+            
+            <classAccesses>
+                <apexClass>CME_CaseQueueController</apexClass>
+                <enabled>true</enabled>
+            </classAccesses>
+            
+            <classAccesses>
+                <apexClass>CME_CaseInsightsActions</apexClass>
+                <enabled>true</enabled>
+            </classAccesses>
+            
+            
+            <!-- Run Flow Permission - Required when project has screen flows -->
+            
+            
+            <hasActivationRequired>false</hasActivationRequired>
+        </PermissionSet>

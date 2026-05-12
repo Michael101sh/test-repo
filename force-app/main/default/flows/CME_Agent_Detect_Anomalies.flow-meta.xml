@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <label>CME Agent Detect Anomalies</label>
+    <interviewLabel>CME Agent Detect Anomalies</interviewLabel>
+    <description>Agent action to detect anomalies in case queue</description>
+    <processType>AutoLaunchedFlow</processType>
+    <status>Active</status>
+
+    <variables>
+        <name>varUserId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <variables>
+        <name>varInsightData</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+
+    <variables>
+        <name>varAnomalyCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_Anomaly_Cases</targetReference>
+        </connector>
+    </start>
+
+    <recordLookups>
+        <name>Get_Anomaly_Cases</name>
+        <label>Get Anomaly Cases</label>
+        <locationX>50</locationX>
+        <locationY>150</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Build_Anomaly_Summary</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>OwnerId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varUserId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>IsClosed</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Priority</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CaseNumber</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <queriedFields>Priority</queriedFields>
+        <queriedFields>LastModifiedDate</queriedFields>
+        <sortField>LastModifiedDate</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+
+    <assignments>
+        <name>Build_Anomaly_Summary</name>
+        <label>Build Anomaly Summary</label>
+        <locationX>50</locationX>
+        <locationY>250</locationY>
+        <assignmentItems>
+            <assignToReference>varAnomalyCount</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varInsightData</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Anomaly Detection Analysis Complete</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+</Flow>
